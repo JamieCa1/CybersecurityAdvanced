@@ -1,4 +1,4 @@
-# Cybersecurity-advanced-lab-template
+# Cybersecurity-advanced-lab
 
 This environment is used to build up the lab set-up. It provides the base network and hosts. The entire network is built up in VirtualBox, using Vagrant and Ansible.
 
