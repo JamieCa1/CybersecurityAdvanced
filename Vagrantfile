@@ -3,6 +3,7 @@
 HOST_ONLY_NETWORK = "VirtualBox Host-Only Ethernet Adapter #3" # Typically on Windows
 
 Vagrant.configure("2") do |config|
+      config.vm.boot_timeout = 600
     config.vm.define "companyrouter" do |host|
         host.vm.box = "almalinux/9"
         host.vm.hostname = "companyrouter"
@@ -165,4 +166,36 @@ Vagrant.configure("2") do |config|
             systemctl restart NetworkManager
         SHELL
     end
+
+    config.vm.define "red" do |red|
+        red.vm.box = "kalilinux/rolling"
+        red.vm.box_version = "2025.3.0"
+        red.vm.hostname = "red"
+        red.vm.provider "virtualbox" do |vb|
+            vb.gui = true
+            vb.name = "red"
+            vb.memory = "2048"
+            vb.cpus = "2"
+        end
+
+    # Verbind de machine met het 'fake internet' netwerk
+    red.vm.network "private_network", ip: "192.168.62.100", name: HOST_ONLY_NETWORK
+
+    # Configureer IP, gateway en DNS in één keer om timingproblemen te voorkomen
+    red.vm.provision "shell", inline: <<-SHELL
+      echo "Configuring network for Kali machine..."
+      # Wacht even tot de netwerk-service volledig is opgestart
+      sleep 10
+      # Stel IP, gateway, en DNS in voor "Wired connection 2"
+      nmcli connection modify "Wired connection 2" \
+        ipv4.addresses 192.168.62.100/24 \
+        ipv4.gateway 192.168.62.254 \
+        ipv4.dns "192.168.62.254" \
+        ipv4.method manual
+      # Activeer de verbinding om de wijzigingen toe te passen
+      nmcli connection up "Wired connection 2"
+      # Herstart de NetworkManager voor de zekerheid
+      systemctl restart NetworkManager
+    SHELL
+  end
 end

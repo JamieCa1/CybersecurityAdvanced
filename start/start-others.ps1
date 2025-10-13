@@ -1,5 +1,5 @@
 # Define the other VM names from your Vagrantfile
-$vms = "dns", "web", "database", "employee", "remote-employee"
+$vms = "dns", "web", "database", "employee", "remote-employee", "red"
 
 # Define the VirtualBox program path
 # You might need to adjust this path if VirtualBox is not installed in the default location.

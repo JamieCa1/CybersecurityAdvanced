@@ -93,7 +93,7 @@ nwdiag {
     ```bash
     isprouter:~$ cd ansible/
     isprouter:~/ansible$ find . -type f -not -path "./files/web/app.jar" -print0 | xargs -0 dos2unix
-    isprouter:~/ansible$ chmod u+x run-on-isprouter.sh
+    isprouter:~/ansible$ 
     isprouter:~/ansible$ sudo ./run-on-isprouter.sh
     ...
 
@@ -102,3 +102,4 @@ nwdiag {
     ```
 
     :bulb: We have added `dos2unix` here for Windows users, but why do they need this? Tip: Linux users don't need this. Tip2: `\r\n` vs. `\n`.
+chmod u+x run-on-isprouter.sh
