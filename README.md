@@ -16,7 +16,7 @@ The network consists of 4 subnets:
 @startuml
 nwdiag {
     network internal_company_lan {
-        address = 172.30.0.0/16;
+        address = "172.30.0.0/16";
 
         companyrouter [address = "172.30.255.254"];
         dns [address = "172.30.0.4"];
@@ -32,10 +32,11 @@ nwdiag {
         isprouter [address = "192.168.62.254"];
         your_laptop [address = "dhcp"];
         homerouter [address = "192.168.62.42"];
+        red [address = "192.168.62.100"];
     }
 
     network employee_home_lan {
-        address = "172.10.0.0/24";
+        address = "172.10.10.0/24";
 
         homerouter [address = "172.10.10.254"];
         remote_employee [address = "172.10.10.123"];
@@ -56,7 +57,9 @@ nwdiag {
 ```
 -->
 
-![](https://www.plantuml.com/plantuml/svg/VPBXRi8W4CU_zob8lzjPj6wBMU9xc8MSSjD62WJekcRntOUPeXWAsc-__t7yxZRMWN5z9mevy1OEvBSW_aXqWp8dqag7He9WUzLfa2CJ8A_8vG3d1gqb7wH-fTLYNldVIxrQ5u6uvepgVI6olGVAQu8sZV-MvUSwPBYqAN9UHTI0kpHLpwDYu6075YVOvf75JWiruXHB5pVuN4IMlk24x5yLkgIUidwdLRrwgrRK6wBBCgCe6QBDuh7Jrkei_wnqLBrX0hHJEahmuru_SaVLORxmagOb17diKYEv9q5dxNK63Rch0-__pqyos2c7x7PjCfGRsdThN0zYftwOXAcfNHeD4ylQ3t2yKl4jx00E1nXJEPg9SMbJaUUd6GHntyCjiKVGwFczK3ttQAQXsInEhujpiK79-qxy0G00)
+
+![](https://www.plantuml.com/plantuml/svg/XPBTRe8m68RFkOh6SnbKSLlC4k_3BCsd_IR4qZRz6IEBzpw8ogYZh8Ipv-dF-tuxwy0uNuj4Dho24_bEIBSakaQPCwcaGoD1iAEgDSYM2P0tf5_0kK5hoHjPvCyqNMLfzptbcyKs6PYRQPHtQCZ-hqABellNY_Vju71ffyWi3QW63zDKdWMRWOC3M8omnPZ5MWlLOeobgpjyIOASFk2Cx1eMkaX0hpJDDo_fXdOHqVLyH1CIBLRZcrPM_yE7aRRA6oP0EwK3WvT7FUPALUFynciwvWto69XdMIIkUyoiFsr-flA-pZ2n-2q7uV7r1clba4NhlKhnVZyhupo8W_fY4c85zoCob1ihAeJ3wGjFOITms40xvT4PZKixfJm-pI28tv7T4rk2neu_2kLvZyOlj5o6zZQv93kKtDVY1m00)
+
 
 ## Usage
 

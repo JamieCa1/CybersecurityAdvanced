@@ -1,9 +1,16 @@
+# -*- mode: ruby -*-
+# vi: set ft=ruby :
 
+# All Vagrant configuration is done below. The "2" in Vagrant.configure
+# configures the configuration version (we support older styles for
+# backwards compatibility). Please don't change it unless you know what
+# you're doing.
+
+# Typically on Windows you'll have to change the HOST_ONLY_NETWORK name to something like "VirtualBox Host-Only Ethernet Adapter #2"
 #HOST_ONLY_NETWORK = "vboxnet1" # Typically on Linux/Mac
 HOST_ONLY_NETWORK = "VirtualBox Host-Only Ethernet Adapter #3" # Typically on Windows
 
 Vagrant.configure("2") do |config|
-      config.vm.boot_timeout = 600
     config.vm.define "companyrouter" do |host|
         host.vm.box = "almalinux/9"
         host.vm.hostname = "companyrouter"
@@ -40,8 +47,10 @@ Vagrant.configure("2") do |config|
             # For ansible
             apk --no-cache add python3
 
-            # Default gateway
-            echo "gateway 172.30.255.254" >> /etc/network/interfaces
+            # Default gateway (Idempotent check to prevent errors on reload)
+            if ! grep -q "gateway 172.30.255.254" /etc/network/interfaces; then
+              echo "gateway 172.30.255.254" >> /etc/network/interfaces
+            fi
             service networking restart
         SHELL
     end
@@ -81,8 +90,10 @@ Vagrant.configure("2") do |config|
             # For ansible
             apk --no-cache add python3
 
-            # Default gateway
-            echo "gateway 172.30.255.254" >> /etc/network/interfaces
+            # Default gateway (Idempotent check to prevent errors on reload)
+            if ! grep -q "gateway 172.30.255.254" /etc/network/interfaces; then
+              echo "gateway 172.30.255.254" >> /etc/network/interfaces
+            fi
             service networking restart
         SHELL
     end
@@ -104,8 +115,10 @@ Vagrant.configure("2") do |config|
             # For ansible
             apk --no-cache add python3
 
-            # Default gateway
-            echo "gateway 172.30.255.254" >> /etc/network/interfaces
+            # Default gateway (Idempotent check to prevent errors on reload)
+            if ! grep -q "gateway 172.30.255.254" /etc/network/interfaces; then
+              echo "gateway 172.30.255.254" >> /etc/network/interfaces
+            fi
             service networking restart
         SHELL
     end
@@ -167,35 +180,25 @@ Vagrant.configure("2") do |config|
         SHELL
     end
 
-    config.vm.define "red" do |red|
-        red.vm.box = "kalilinux/rolling"
-        red.vm.box_version = "2025.3.0"
-        red.vm.hostname = "red"
-        red.vm.provider "virtualbox" do |vb|
-            vb.gui = true
-            vb.name = "red"
-            vb.memory = "2048"
-            vb.cpus = "2"
+    # Red Team Attacker Machine
+    config.vm.define "red" do |host|
+        host.vm.box = "kalilinux/rolling"
+        host.vm.hostname = "red"
+
+        host.vm.network "private_network", ip: "192.168.62.100", netmask: "255.255.255.0", name: HOST_ONLY_NETWORK
+
+        host.vm.provider :virtualbox do |v|
+            v.name = "red"
+            v.cpus = "2"
+            v.memory = "2048"
         end
 
-    # Verbind de machine met het 'fake internet' netwerk
-    red.vm.network "private_network", ip: "192.168.62.100", name: HOST_ONLY_NETWORK
+        host.vm.provision "shell", inline: <<-SHELL
+            # Set default gateway to isprouter
+            # On Kali/Debian, the connection name often defaults to the interface name, e.g., 'eth1'
+            nmcli connection modify eth1 ipv4.gateway 192.168.62.254
+            systemctl restart NetworkManager
+        SHELL
+    end
 
-    # Configureer IP, gateway en DNS in één keer om timingproblemen te voorkomen
-    red.vm.provision "shell", inline: <<-SHELL
-      echo "Configuring network for Kali machine..."
-      # Wacht even tot de netwerk-service volledig is opgestart
-      sleep 10
-      # Stel IP, gateway, en DNS in voor "Wired connection 2"
-      nmcli connection modify "Wired connection 2" \
-        ipv4.addresses 192.168.62.100/24 \
-        ipv4.gateway 192.168.62.254 \
-        ipv4.dns "192.168.62.254" \
-        ipv4.method manual
-      # Activeer de verbinding om de wijzigingen toe te passen
-      nmcli connection up "Wired connection 2"
-      # Herstart de NetworkManager voor de zekerheid
-      systemctl restart NetworkManager
-    SHELL
-  end
 end

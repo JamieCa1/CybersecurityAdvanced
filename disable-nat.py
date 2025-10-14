@@ -11,6 +11,7 @@ vms = [
     "employee",
     "homerouter",
     "remote-employee",
+    "red"
 ]
 
 if platform.system() == "Windows":
